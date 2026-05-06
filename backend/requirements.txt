@@ -1,4 +1,4 @@
-Flask
-Flask-CORS
-pandas
-requests
+Flask>=3.0.0
+Flask-Cors>=4.0.0
+pandas>=2.1.4
+requests>=2.31.0
