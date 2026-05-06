@@ -1,0 +1,44 @@
+# VA Bot Analytics - Comprehensive Test Prompts
+
+Copy and paste these prompts into the VA Bot to test its natural language data analysis and visual chart generation capabilities.
+
+--- 📊 1. TESTING VISUAL OUTPUTS (CHARTS & GRAPHS) ---
+
+[Test: Pie/Donut Chart]
+"Can you create a pie chart showing our total cost breakdown between shipping and warehousing?"
+
+[Test: Heatmap]
+"I need to understand our risk areas. Can you generate a heatmap showing the stockouts by warehouse zone and category?"
+
+[Test: Scatter Plot]
+"Can you make a scatter plot comparing our forecasted demand versus actual daily demand?"
+
+[Test: Line Chart]
+"Please generate a line chart showing the demand volatility trend across all product categories."
+
+[Test: Bar Chart - Inventory]
+"Can you create a bar chart showing the current stock levels across all product categories?"
+
+[Test: Bar Chart - Supply Chain]
+"I need a visual representation of supply chain delays. Generate a bar chart showing the average lead time in days for each category."
+
+[Test: Scatter Plot - Lead Time]
+"Create a scatter plot comparing current stock levels against lead times to help me find risky items."
+
+--- 📈 2. TESTING EXECUTIVE SUMMARIES ---
+
+"Create a high-level executive summary of our current warehouse operations, focusing on the overall KPI score and total inventory value."
+
+"Give me a quick breakdown of our stockout rates and average fulfillment efficiency for the operations team."
+
+--- 📉 3. TESTING DEEP DATA INSIGHTS ---
+
+"What are our top 5 items that are currently critically low on stock and need immediate reordering?"
+
+"Which item categories have the highest order fulfillment rates, and what are their corresponding stockouts?"
+
+"Based on the layout efficiency score and picking times, which warehouse zones are performing the best and which need improvement?"
+
+"Which SKUs are considered 'DEAD' based on turnover ratio, and what zone are they located in?"
+
+"Which SKUs are moving fast and have the best turnover ratio?"
