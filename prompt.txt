@@ -42,3 +42,22 @@ Copy and paste these prompts into the VA Bot to test its natural language data a
 "Which SKUs are considered 'DEAD' based on turnover ratio, and what zone are they located in?"
 
 "Which SKUs are moving fast and have the best turnover ratio?"
+--- 🌏 4. MULTI-LANGUAGE TESTING (TAMIL & TANGLISH) ---
+
+[Test: Tanglish - Visual Request]
+"Stockout items pathi oru visual kaatu." (Show a visual about stockout items)
+
+[Test: Tanglish - Analysis]
+"Low stock items list kudunga, reorder panna help pannunga." (Give the list of low stock items and help with reordering.)
+
+[Test: Tamil - Visual Request]
+"ஒவ்வொரு பிரிவிலும் உள்ள ஸ்டாக் அளவை ஒரு வரைபடமாக (Chart) காட்டு." (Show the stock level in each category as a chart.)
+
+[Test: Tamil - Deep Insight]
+"அதிகமாக விற்கப்படும் பொருட்கள் எவை மற்றும் அவற்றின் இருப்பு எவ்வளவு?" (Which items are sold the most and what is their current stock?)
+
+[Test: Tanglish - Mix]
+"Endha warehouse zone-la efficiency romba low-va iruku?" (In which warehouse zone is efficiency very low?)
+
+[Test: Tamil - Executive Summary]
+"ஒட்டுமொத்த கிடங்கு செயல்பாடுகள் பற்றிய ஒரு சுருக்கமான அறிக்கையைத் தாருங்கள்." (Give a brief report on overall warehouse operations.)

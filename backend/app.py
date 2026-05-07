@@ -230,8 +230,18 @@ def dashboard_master():
         # 8. Turnover Analytics
         turnover_cat = cat_group['turnover_ratio'].mean().reset_index().to_dict('records')
         turnover_vs_demand = df[['turnover_ratio', 'daily_demand']].sample(min(200, len(df))).to_dict('records')
-        fast_moving = df.nlargest(5, 'turnover_ratio')[['item_id', 'category', 'turnover_ratio']].to_dict('records')
-        slow_moving = df.nsmallest(5, 'turnover_ratio')[['item_id', 'category', 'turnover_ratio']].to_dict('records')
+        fast_moving = df.nlargest(5, 'turnover_ratio')[['item_id', 'category', 'turnover_ratio', 'stock_level', 'lead_time_days', 'stockout_count_last_month']].to_dict('records')
+        slow_moving = df.nsmallest(5, 'turnover_ratio')[['item_id', 'category', 'turnover_ratio', 'stock_level', 'lead_time_days', 'stockout_count_last_month']].to_dict('records')
+
+        # 9. Fulfillment Analytics
+        fulfillment_cat = cat_group['order_fulfillment_rate'].mean().reset_index()
+        fulfillment_cat.columns = ['category', 'avg_rate']
+        fulfillment_cat = fulfillment_cat.to_dict('records')
+
+        # 10. Operational Pulse
+        throughput_pulse = zone_group['total_orders_last_month'].sum().reset_index()
+        throughput_pulse.columns = ['zone', 'orders']
+        throughput_pulse = throughput_pulse.to_dict('records')
 
         return jsonify({
             "kpis": kpis,
@@ -241,7 +251,9 @@ def dashboard_master():
             "supplyChain": {"leadTimeCat": lead_time_cat, "leadVsStock": lead_vs_stock},
             "warehouse": {"pickingByZone": picking_by_zone, "layoutEff": layout_eff, "pickVsOrders": pick_vs_orders},
             "cost": {"breakdown": cost_breakdown, "byCat": cost_by_cat},
-            "turnover": {"byCat": turnover_cat, "vsDemand": turnover_vs_demand, "fast": fast_moving, "slow": slow_moving}
+            "turnover": {"byCat": turnover_cat, "vsDemand": turnover_vs_demand, "fast": fast_moving, "slow": slow_moving},
+            "fulfillment": fulfillment_cat,
+            "operational": {"throughput": throughput_pulse}
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -249,33 +261,40 @@ def dashboard_master():
 # --- Chatbot Integration (Ollama) ---
 
 # Master Prompt Definition
-SYSTEM_PROMPT = """You are a senior data engineer, warehouse analytics AI assistant, and UI/UX expert for the VA Bot Dashboard.
-Your goal is to answer user questions regarding warehouse operations, inventory, and logistics based on the provided data context.
+SYSTEM_PROMPT = """You are the Vdart Analytics Bot (VA Bot), developed by Karuppasamy M. You are a high-end, MNC-level warehouse intelligence copilot.
+
+IDENTITY & ORIGIN:
+- Name: VA Bot
+- Full Form: Vdart Analytics Bot    
+- Developer: Karuppasamy M  
+- Purpose: Enterprise-grade warehouse data analysis and strategic intelligence.
+
+ADAPTIVE RESPONSE & PRECISION RULE:
+- If the user says "hi", "hello", or "hey": Respond ONLY with: "Hi, I am VA Bot, developed by Karuppasamy M at Vdart. Any questions to ask me?"
+- If the user asks for IDENTITY DETAILS (e.g., "tell about yourself", "who are you"): Provide a **Clean & Attractive** structured response with Name, Developer (Karuppasamy M), and Features.
+- If the user asks for a SPECIFIC COUNT (e.g., "Top 5", "3 points"): Deliver EXACTLY that number of points.
+- If the prompt is ANALYTICAL: Use the MNC structure below.
+- NO EXTRA DATA: Never provide warehouse stats for identity/greeting questions.
+
+CORE DIRECTIVE:
+- Deliver a sophisticated, strategic analysis.
+- NEVER use introductory filler like "According to the data..." or "Here are the points...".
+- NEVER provide formulas or "how to calculate" explanations.
+- Use a high-end,AUTHORITATIVE tone.
+
+STRUCTURE for ANALYTICAL QUERIES:
+**Executive Analysis**
+- [Direct, data-rich insights. Do not use repetitive labels like 'Metric: Value'. Instead, write professional sentences: 'Total inventory value has reached $10M across all zones.']
+
+**Strategic Recommendations**
+- [Professional operational advice matched to the user's requested count if applicable.]
 
 RULES:
-1. Be highly professional, extremely concise, and insightful. 
-2. Use the provided context data to answer the question. If the data doesn't contain the answer, politely state you cannot determine this from the available data.
-3. NEVER hallucinate numbers or facts.
-4. Formatting: Structure your response perfectly using Markdown. Use bolding and bullet points. DO NOT use numbered lists (like 1., 2., 3.) for your main headings.
-5. If the user asks you to "create a visual" or "suggest a visual" (e.g., a heatmap, pie chart, or a scatter plot):
-   - DO NOT EVER SAY "I cannot create visuals directly", "I am a text-based AI", or anything similar. Just create the chart!
-   - You MUST output a code block starting with ```json and ending with ``` containing the chart data.
-   - CRITICAL: You MUST map REAL VALUES from the CONTEXT DATA into the JSON arrays. DO NOT use placeholders.
-   - CRITICAL: The JSON MUST be strictly valid. DO NOT put any `//` comments inside the JSON block.
-   - Use this exact structure:
-     {{
-       "chart_type": "bar",
-       "title": "Your Chart Title",
-       "x_label": "X Axis Label",
-       "y_label": "Y Axis Label",
-       "labels": ["Category A", "Category B", "Category C"],
-       "data": [10, 20, 30]
-     }}
-   - Note: For "scatter" charts, "data" MUST be an array of objects like this: [{{"x": 10, "y": 20}}, {{"x": 30, "y": 40}}]
-   - Underneath the JSON code block, provide a brief, insightful explanation of the visual you just created.
-6. Think step-by-step before providing the final answer, but ONLY output the final structured, polished response to the user.
+- Use **Bold Headers** and **Bullet Points**.
+- NO numbered lists (unless a very specific ordered process is requested).
+- Language: Tamil for Tamil queries, English for all others.
 
-CONTEXT DATA FROM DATABASE:
+CONTEXT DATA:
 {context}
 
 USER QUESTION:
@@ -284,22 +303,54 @@ USER QUESTION:
 
 def get_context_for_question(question):
     """
-    Very basic heuristic to fetch relevant data. 
-    In a real RAG system, we would use embeddings or an LLM to generate the SQL.
-    Here we do some keyword matching to pull summary data.
+    Enhanced heuristic to fetch relevant data with multi-language keyword support.
     """
     q_lower = question.lower()
     context_data = {}
 
-    if 'stockout' in q_lower or 'shortage' in q_lower:
+    # Identity Questions & Greetings - NO DATA NEEDED
+    if any(k in q_lower for k in ['hi', 'hello', 'hey', 'your name', 'who are you', 'about yourself', 'who built', 'developer', 'your features']):
+        return json.dumps({"identity_query": True})
+
+    # Stockout / Shortage / குறையுள்ளது (Tamil) / Kaali (Tanglish)
+    if any(k in q_lower for k in ['stockout', 'shortage', 'pathu', 'kaali', 'shortage', 'illai']):
         context_data['stockouts'] = execute_query("SELECT item_id, category, stockout_count_last_month FROM inventory WHERE stockout_count_last_month > 0 ORDER BY stockout_count_last_month DESC LIMIT 5")
-    if 'low stock' in q_lower or 'reorder' in q_lower:
+    
+    # Low Stock / Reorder / கம்மியா (Tamil) / Kammi (Tanglish)
+    if any(k in q_lower for k in ['low stock', 'reorder', 'kammi', 'irupu', 'kuraivu']):
          context_data['low_stock'] = execute_query("SELECT item_id, category, stock_level, reorder_point FROM inventory WHERE stock_level <= reorder_point LIMIT 5")
-    if 'category' in q_lower or 'categories' in q_lower:
+    
+    # Category / Items / வகைகள் (Tamil)
+    if any(k in q_lower for k in ['category', 'categories', 'vagai', 'items', 'porutkal']):
          context_data['categories'] = execute_query("SELECT category, COUNT(item_id) as num_items, SUM(stock_level) as total_stock FROM inventory GROUP BY category")
-    if 'fulfillment' in q_lower or 'rate' in q_lower:
+    
+    # Fulfillment / Rate / Efficiency / வேகம் (Tamil)
+    if any(k in q_lower for k in ['fulfillment', 'rate', 'efficiency', 'vegam', 'score']):
          context_data['fulfillment'] = execute_query("SELECT category, AVG(order_fulfillment_rate) as avg_rate FROM inventory GROUP BY category")
     
+    # Lead Time / Stock Levels / Risk Analysis
+    if any(k in q_lower for k in ['lead time', 'stock level', 'stock vs lead', 'risk items', 'neram']):
+         context_data['supply_chain_risk'] = execute_query("SELECT category, item_id, stock_level, lead_time_days FROM inventory ORDER BY stock_level DESC LIMIT 20")
+
+    # Demand / Forecasting / Volatility
+    if any(k in q_lower for k in ['demand', 'forecast', 'volatility', 'trend']):
+         context_data['demand_analytics'] = execute_query("SELECT category, AVG(daily_demand) as avg_demand, AVG(forecasted_demand_next_7d) as avg_forecast FROM inventory GROUP BY category")
+    
+    # Turnover / Fast Moving / Dead Stock
+    if any(k in q_lower for k in ['turnover', 'fast', 'dead', 'ratio', 'moving']):
+         context_data['turnover_data'] = execute_query("SELECT item_id, category, turnover_ratio, warehouse_zone FROM inventory ORDER BY turnover_ratio DESC LIMIT 10")
+
+    # Warehouse Zones / Layout Efficiency
+    if any(k in q_lower for k in ['zone', 'layout', 'efficiency', 'performing', 'best']):
+         context_data['zone_performance'] = execute_query("SELECT warehouse_zone, AVG(layout_efficiency_score) as avg_eff, AVG(order_picking_time_seconds) as avg_picking FROM inventory GROUP BY warehouse_zone ORDER BY avg_eff DESC")
+    
+    
+    import re
+    itm_match = re.search(r'itm\d+', q_lower)
+    if itm_match:
+        itm_id = itm_match.group(0).upper()
+        context_data['specific_item'] = execute_query("SELECT * FROM inventory WHERE item_id = ?", (itm_id,))
+
     # If no specific keywords, grab general KPIs
     if not context_data:
         context_data['kpis'] = execute_query("SELECT COUNT(*) as total_items, SUM(stock_level) as total_stock, SUM(stockout_count_last_month) as total_stockouts FROM inventory")
