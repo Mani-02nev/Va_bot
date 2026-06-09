@@ -1,0 +1,16 @@
+employee_id,name,department,salary,hire_date,projects_completed,performance_score,office_location
+EMP1000,John Doe,Engineering,85000,2023-01-15,12,8.5,Atlanta
+EMP1001,Jane Smith,Marketing,62000,2022-11-01,8,,Atlanta
+EMP1002,Bob Johnson,Sales,55000,2024-03-10,3,6.2,Chicago
+EMP1003,Alice Brown,Engineering,92000,2021-06-20,15,9.1,New York
+EMP1004,Charlie Green,Sales,58000,2023-08-01,,7.0,Chicago
+EMP1005,Diana Prince,HR,68000,2020-05-12,5,8.8,New York
+EMP1006,Evan Wright,Engineering,79000,2024-01-10,4,7.4,Chicago
+EMP1007,Fiona Gallagher,Marketing,64000,2023-09-15,6,,Atlanta
+EMP1008,George Costanza,HR,48000,2022-04-01,2,5.5,New York
+EMP1009,Helen Troy,Sales,61000,2023-10-05,7,7.9,Atlanta
+EMP1010,Ian Malcolm,Engineering,98000,2019-07-22,18,9.5,New York
+EMP1011,Julia Roberts,HR,72000,2021-02-18,9,8.2,Chicago
+EMP1012,Kevin Bacon,Sales,59000,2023-03-01,,6.8,Atlanta
+EMP1013,Lois Lane,Marketing,67000,2022-08-14,8,8.0,New York
+EMP1014,Michael Scott,Sales,52000,2021-04-01,1,4.0,Chicago

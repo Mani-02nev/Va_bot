@@ -5,13 +5,13 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   safelist: [
-    'text-vdart', 'bg-vdart/10', 'bg-vdart', 'text-vdart-success', 'bg-vdart-success/10', 'bg-vdart-success',
-    'text-vdart-warning', 'bg-vdart-warning/10', 'bg-vdart-warning', 'text-vdart-danger', 'bg-vdart-danger/10', 'bg-vdart-danger'
+    'text-brand', 'bg-brand/10', 'bg-brand', 'text-brand-success', 'bg-brand-success/10', 'bg-brand-success',
+    'text-brand-warning', 'bg-brand-warning/10', 'bg-brand-warning', 'text-brand-danger', 'bg-brand-danger/10', 'bg-brand-danger'
   ],
   theme: {
     extend: {
       colors: {
-        vdart: {
+        brand: {
           DEFAULT: '#0A2A66',  // Primary Blue
           secondary: '#123A8C',// Secondary Blue
           accent: '#1F5EDC',   // Accent Blue

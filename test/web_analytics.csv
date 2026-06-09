@@ -1,0 +1,16 @@
+session_id,device_category,bounce_rate,session_duration_sec,pageviews,visitor_type,traffic_source
+SES4000,Desktop,0.42,180,4,Returning,Organic Search
+SES4001,Mobile,0.65,45,2,New,Paid Social
+SES4002,Mobile,0.58,90,3,New,Direct
+SES4003,Desktop,0.25,320,8,Returning,Referral
+SES4004,Tablet,0.50,110,3,New,Organic Search
+SES4005,Desktop,0.30,240,5,Returning,Direct
+SES4006,Mobile,0.72,20,1,New,Paid Search
+SES4007,Desktop,0.15,480,12,Returning,Organic Search
+SES4008,Tablet,0.60,75,2,New,Organic Social
+SES4009,Mobile,0.55,105,4,Returning,Paid Social
+SES4010,Desktop,0.22,350,9,Returning,Referral
+SES4011,Mobile,0.68,35,1,New,Organic Search
+SES4012,Desktop,0.38,150,3,New,Direct
+SES4013,Mobile,0.62,85,2,Returning,Paid Search
+SES4014,Desktop,0.28,290,6,Returning,Organic Search

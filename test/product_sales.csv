@@ -1,0 +1,16 @@
+transaction_id,product_name,category,units_sold,unit_price,revenue,transaction_date,customer_region
+TXN2000,Premium Laptop,Electronics,5,1200,6000,2025-05-01,North
+TXN2001,Wireless Mouse,Electronics,45,25,1125,2025-05-01,South
+TXN2002,Ergonomic Chair,Furniture,12,250,3000,2025-05-02,East
+TXN2003,Leather Journal,Office Supplies,80,15,1200,2025-05-02,West
+TXN2004,Bluetooth Speaker,Electronics,18,80,1440,2025-05-03,North
+TXN2005,Standing Desk,Furniture,8,450,3600,2025-05-03,West
+TXN2006,Gel Pen Set,Office Supplies,150,5,750,2025-05-04,South
+TXN2007,Noise Cancelling Headset,Electronics,22,150,3300,2025-05-04,East
+TXN2008,Coffee Table,Furniture,4,180,720,2025-05-05,South
+TXN2009,Stapler Heavy Duty,Office Supplies,40,12,480,2025-05-05,North
+TXN2010,4K Monitor,Electronics,10,350,3500,2025-05-06,West
+TXN2011,Notebook Pack,Office Supplies,120,6,720,2025-05-06,East
+TXN2012,Bookshelf,Furniture,6,220,1320,2025-05-07,North
+TXN2013,Charging Cable,Electronics,200,8,1600,2025-05-07,South
+TXN2014,Desk Organizer,Office Supplies,35,20,700,2025-05-08,West

@@ -1,0 +1,16 @@
+patient_id,age,gender,blood_pressure,cholesterol,visits_last_year,admitted_status,department
+PAT5000,45,Male,130,210,3,Discharged,Cardiology
+PAT5001,62,Female,142,245,6,Admitted,Cardiology
+PAT5002,28,Male,115,185,1,Discharged,Pediatrics
+PAT5003,74,Female,135,220,12,Admitted,Geriatrics
+PAT5004,50,Male,128,198,,Discharged,Emergency
+PAT5005,35,Female,120,,2,Discharged,Orthopedics
+PAT5006,58,Male,138,230,5,Discharged,Internal Medicine
+PAT5007,67,Female,145,260,8,Admitted,Geriology
+PAT5008,22,Male,112,170,0,Discharged,Emergency
+PAT5009,81,Female,150,275,15,Admitted,Geriatrics
+PAT5010,48,Male,122,205,3,Discharged,Internal Medicine
+PAT5011,31,Female,118,190,2,Discharged,Obstetrics
+PAT5012,55,Male,132,225,4,Discharged,Orthopedics
+PAT5013,64,Female,140,240,7,Discharged,Cardiology
+PAT5014,70,Male,148,255,10,Admitted,Geriatrics

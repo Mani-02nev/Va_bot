@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confirm your email — View Once</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #f0f4ff;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrapper {
+      max-width: 560px;
+      margin: 40px auto;
+      padding: 0 16px 40px;
+    }
+    /* ── CARD ── */
+    .card {
+      background: #ffffff;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 4px 40px rgba(31, 94, 220, 0.12);
+    }
+    /* ── HEADER GRADIENT ── */
+    .header {
+      background: linear-gradient(135deg, #0A2A66 0%, #1F5EDC 60%, #3b82f6 100%);
+      padding: 40px 40px 36px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -40px; left: -40px;
+      width: 140px; height: 140px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+    .logo-wrap {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px; height: 64px;
+      background: rgba(255,255,255,0.15);
+      border: 1.5px solid rgba(255,255,255,0.25);
+      border-radius: 18px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(8px);
+    }
+    .logo-wrap img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+    .header-title {
+      font-size: 24px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+    .header-sub {
+      font-size: 13px;
+      color: rgba(255,255,255,0.65);
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+    /* ── BODY ── */
+    .body {
+      padding: 40px 40px 32px;
+    }
+    .greeting {
+      font-size: 20px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 12px;
+      letter-spacing: -0.3px;
+    }
+    .message {
+      font-size: 14px;
+      color: #475569;
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .message strong {
+      color: #1e293b;
+      font-weight: 700;
+    }
+    /* ── CTA BUTTON ── */
+    .cta-wrap {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #1F5EDC, #0A2A66);
+      color: #ffffff !important;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 800;
+      padding: 16px 40px;
+      border-radius: 14px;
+      letter-spacing: 0.2px;
+      box-shadow: 0 8px 24px rgba(31, 94, 220, 0.35);
+      transition: all 0.2s;
+    }
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: #f1f5f9;
+      margin: 28px 0;
+    }
+    /* ── FEATURES ROW ── */
+    .features {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .feature {
+      flex: 1;
+      background: #f8faff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 16px 12px;
+      text-align: center;
+    }
+    .feature-icon {
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+    .feature-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    /* ── SECURITY NOTE ── */
+    .security-note {
+      background: #f8faff;
+      border: 1px solid #e0e7ff;
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .security-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .security-text {
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.6;
+    }
+    .security-text strong {
+      color: #1e293b;
+      font-weight: 700;
+    }
+    /* ── FALLBACK LINK ── */
+    .fallback {
+      font-size: 12px;
+      color: #94a3b8;
+      text-align: center;
+      margin-bottom: 4px;
+      line-height: 1.6;
+    }
+    .fallback a {
+      color: #1F5EDC;
+      word-break: break-all;
+    }
+    /* ── FOOTER ── */
+    .footer {
+      background: #f8fafc;
+      border-top: 1px solid #f1f5f9;
+      padding: 24px 40px;
+      text-align: center;
+    }
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .footer-logo {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+      border-radius: 5px;
+    }
+    .footer-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #334155;
+    }
+    .footer-links {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-bottom: 6px;
+    }
+    .footer-links a {
+      color: #64748b;
+      text-decoration: none;
+      margin: 0 6px;
+    }
+    .footer-copy {
+      font-size: 11px;
+      color: #cbd5e1;
+    }
+    /* ── TOP META ── */
+    .meta-bar {
+      text-align: center;
+      padding: 12px 0 4px;
+    }
+    .meta-bar a {
+      font-size: 11px;
+      color: #94a3b8;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+
+    <!-- Meta -->
+    <div class="meta-bar">
+      <a href="https://da-agent-tnok.vercel.app">View in browser</a>
+    </div>
+
+    <div class="card">
+
+      <!-- ── HEADER ── -->
+      <div class="header">
+        <div class="logo-wrap">
+          <img src="https://da-agent-tnok.vercel.app/logo.png" alt="View Once Logo" />
+        </div>
+        <div class="header-title">View Once</div>
+        <div class="header-sub">Enterprise Warehouse Intelligence Platform</div>
+      </div>
+
+      <!-- ── BODY ── -->
+      <div class="body">
+
+        <div class="greeting">Confirm your email address 👋</div>
+
+        <p class="message">
+          Welcome to <strong>View Once</strong> — your intelligent data analytics workspace powered by AI.<br /><br />
+          Click the button below to verify your email address and activate your account. Once confirmed, you'll be able to upload datasets, generate AI-powered insights, and sync your projects securely to the cloud.
+        </p>
+
+        <!-- CTA -->
+        <div class="cta-wrap">
+          <a href="{{ .ConfirmationURL }}" class="cta-btn">
+            ✓ &nbsp; Confirm My Email
+          </a>
+        </div>
+
+        <!-- Feature highlights -->
+        <div class="features">
+          <div class="feature">
+            <div class="feature-icon">📊</div>
+            <div class="feature-label">AI Analytics</div>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">🔍</div>
+            <div class="feature-label">Box Plots</div>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">☁️</div>
+            <div class="feature-label">Cloud Sync</div>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">🔐</div>
+            <div class="feature-label">Secure RLS</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Security note -->
+        <div class="security-note">
+          <div class="security-icon">🔒</div>
+          <div class="security-text">
+            <strong>This link expires in 24 hours.</strong> If you didn't create a View Once account, you can safely ignore this email — no account will be created.
+          </div>
+        </div>
+
+        <!-- Fallback link -->
+        <p class="fallback">
+          Button not working? Copy and paste this link into your browser:<br />
+          <a href="{{ .ConfirmationURL }}">{{ .ConfirmationURL }}</a>
+        </p>
+
+      </div>
+
+      <!-- ── FOOTER ── -->
+      <div class="footer">
+        <div class="footer-brand">
+          <img src="https://da-agent-tnok.vercel.app/logo.png" class="footer-logo" alt="Logo" />
+          <span class="footer-name">View Once · Mr K AI Eco System</span>
+        </div>
+        <div class="footer-links">
+          <a href="https://da-agent-tnok.vercel.app">Visit App</a>
+          <a href="https://da-agent-tnok.vercel.app">Privacy Policy</a>
+          <a href="https://da-agent-tnok.vercel.app">Support</a>
+        </div>
+        <div class="footer-copy">© 2025 View Once. All rights reserved.</div>
+      </div>
+
+    </div><!-- /card -->
+  </div>
+</body>
+</html>

@@ -12,8 +12,8 @@ CORS(app)
 # --- Configuration ---
 DATA_FILE = '../data/logistics_dataset.csv'
 DB_FILE = 'warehouse.db'
-OLLAMA_URL = 'http://localhost:11434/api/generate'
-OLLAMA_MODEL = 'mistral:latest' # Change this if you have a different model (e.g., mistral, llama2)
+OLLAMA_URL = 'http://127.0.0.1:11434/api/generate'
+OLLAMA_MODEL = 'qwen2.5-coder:1.5b-base'
 
 # --- Data Ingestion & Database Setup ---
 def setup_database():
@@ -282,6 +282,22 @@ CORE DIRECTIVE:
 - NEVER provide formulas or "how to calculate" explanations.
 - Use a high-end,AUTHORITATIVE tone.
 
+DYNAMIC VISUALIZATION RULE:
+- If the user asks for a "visual", "chart", "graph", "plot", or "analyze with visual": You MUST include a JSON code block AFTER your text analysis.
+- Structure for JSON:
+```json
+{{
+  "chart_type": "bar" | "line" | "pie" | "doughnut" | "scatter",
+  "title": "Clear Analysis Title",
+  "labels": ["Item A", "Item B", ...],
+  "data": [val1, val2, ...],
+  "x_label": "Category Name",
+  "y_label": "Metric Name",
+  "colors": ["#1F5EDC", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"]
+}}
+```
+- Only generate the chart if it adds strategic value to the query.
+
 STRUCTURE for ANALYTICAL QUERIES:
 **Executive Analysis**
 - [Direct, data-rich insights. Do not use repetitive labels like 'Metric: Value'. Instead, write professional sentences: 'Total inventory value has reached $10M across all zones.']
@@ -351,6 +367,10 @@ def get_context_for_question(question):
         itm_id = itm_match.group(0).upper()
         context_data['specific_item'] = execute_query("SELECT * FROM inventory WHERE item_id = ?", (itm_id,))
 
+    # Visual / Chart / Graph Requested
+    if any(k in q_lower for k in ['visual', 'chart', 'graph', 'plot', 'வரைபடம்']):
+        context_data['visualization_data'] = execute_query("SELECT category, SUM(stock_level) as total_stock, AVG(order_fulfillment_rate) as avg_fulfillment FROM inventory GROUP BY category ORDER BY total_stock DESC")
+
     # If no specific keywords, grab general KPIs
     if not context_data:
         context_data['kpis'] = execute_query("SELECT COUNT(*) as total_items, SUM(stock_level) as total_stock, SUM(stockout_count_last_month) as total_stockouts FROM inventory")
@@ -371,14 +391,18 @@ def chat():
 
     # 3. Call local Ollama API
     try:
-        response = requests.post(
+        # Use a session to avoid proxy issues and improve performance
+        session = requests.Session()
+        session.trust_env = False  # This prevents requests from using system proxies that might block localhost
+        
+        response = session.post(
             OLLAMA_URL,
             json={
                 "model": OLLAMA_MODEL,
                 "prompt": prompt,
                 "stream": False
             },
-            timeout=120 # Prevent hanging forever
+            timeout=300
         )
         response.raise_for_status()
         result = response.json()
@@ -386,11 +410,27 @@ def chat():
 
     except requests.exceptions.RequestException as e:
         print(f"Ollama API error: {e}")
+        # Try a fallback to localhost if 127.0.0.1 failed
         return jsonify({
             "error": "Failed to connect to local LLM. Make sure Ollama is running.",
             "details": str(e)
         }), 500
 
+def check_ollama():
+    """Checks if Ollama is accessible on startup."""
+    try:
+        session = requests.Session()
+        session.trust_env = False
+        # Just check the tags endpoint to see if it's alive
+        response = session.get('http://127.0.0.1:11434/api/tags', timeout=5)
+        if response.status_code == 200:
+            print("Successfully connected to Ollama.")
+        else:
+            print(f"Warning: Ollama returned status {response.status_code}")
+    except Exception as e:
+        print(f"Warning: Could not connect to Ollama on startup: {e}")
+
 if __name__ == '__main__':
     setup_database()
+    check_ollama()
     app.run(debug=True, port=5001)
