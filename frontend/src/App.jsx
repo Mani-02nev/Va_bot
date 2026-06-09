@@ -1989,55 +1989,7 @@ const App = () => {
     );
   };
 
-  // --- SETTINGS PAGE ---
-  const renderSettings = () => (
-    <div className="p-8 max-w-2xl mx-auto overflow-y-auto h-full custom-scrollbar">
-      <h2 className="text-2xl font-black gradient-text mb-2">{T('settings')}</h2>
-      <p className="text-sm text-slate-500 mb-8">Configure your Mr K AI Eco agent</p>
 
-      {/* Authentication (Supabase) */}
-      <div className="glass-card p-6 mb-5">
-        <div className="flex items-center gap-3 mb-5">
-          <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center"><Cpu size={18} className="text-blue-600" /></div>
-          <div>
-            <p className="font-black text-sm text-slate-800">Authentication</p>
-            <p className="text-xs text-slate-400">Sign in with Supabase to securely enable AI features and store keys server-side.</p>
-          </div>
-        </div>
-        {!groqKey && (
-          <div className="mb-3 text-sm text-slate-500">AI responses require authentication. Use the Supabase login flow to enable AI for your account.</div>
-        )}
-        <div className="flex gap-2">
-          <button onClick={() => setMessages(prev => [...prev, { role: 'bot', text: 'Opening Supabase sign-in (placeholder). Configure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable real login.' }])}
-            className="btn-primary flex-1 py-2.5 flex items-center justify-center gap-2"><User size={13} />Sign in with Supabase</button>
-        </div>
-      </div>
-
-      {/* Language */}
-      <div className="glass-card p-6 mb-5">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center"><Globe size={18} className="text-purple-600" /></div>
-          <p className="font-black text-sm text-slate-800">{T('langToggle')}</p>
-        </div>
-        <div className="flex gap-3">
-          <button onClick={() => setLang('en')} className={`flex-1 py-3 rounded-xl text-sm font-bold border transition-all ${lang === 'en' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-200 hover:border-blue-200'}`}>🇬🇧 English</button>
-          <button onClick={() => setLang('ta')} className={`flex-1 py-3 rounded-xl text-sm font-bold border transition-all ${lang === 'ta' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-200 hover:border-blue-200'}`}>🇮🇳 தமிழ்</button>
-        </div>
-      </div>
-
-      {/* Mode */}
-      <div className="glass-card p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center"><Settings size={18} className="text-amber-600" /></div>
-          <p className="font-black text-sm text-slate-800">Application Mode</p>
-        </div>
-        <div className="flex gap-3">
-          <button onClick={() => setAppMode('business')} className={`flex-1 py-3 rounded-xl text-sm font-bold border transition-all ${appMode === 'business' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-slate-600 border-slate-200 hover:border-emerald-200'}`}>🏢 Business Mode</button>
-          <button onClick={() => setAppMode('developer')} className={`flex-1 py-3 rounded-xl text-sm font-bold border transition-all ${appMode === 'developer' ? 'bg-purple-600 text-white border-purple-600' : 'bg-white text-slate-600 border-slate-200 hover:border-purple-200'}`}>🔬 DA Developer</button>
-        </div>
-      </div>
-    </div>
-  );
 
   // ============================================================
   // Main Layout
@@ -2303,8 +2255,7 @@ const App = () => {
     { key: 'developer', icon: Code2, label: T('daDev') },
     { key: 'chat', icon: MessageSquare, label: T('aiWorkspace') },
     { key: 'tutorial', icon: BookOpen, label: T('tutorial') },
-    { key: 'profile', icon: UserCircle2, label: 'Profile' },
-    { key: 'settings', icon: Settings, label: T('settings') }
+    { key: 'profile', icon: UserCircle2, label: 'Profile' }
   ];
 
   return (
@@ -2455,7 +2406,6 @@ const App = () => {
               {currentPage === 'chat' && renderChat()}
               {currentPage === 'tutorial' && renderTutorial()}
               {currentPage === 'profile' && renderProfile()}
-              {currentPage === 'settings' && renderSettings()}
             </>
           )}
         </main>
