@@ -1262,7 +1262,26 @@ const App = () => {
   };
 
   // ---- File Upload ----
+  const handleTriggerUpload = () => {
+    if (!supaUser) {
+      setAuthError('Please sign in to upload datasets and save your work.');
+      setAuthSuccess('');
+      setAuthTab('signin');
+      setAuthModalOpen(true);
+      return;
+    }
+    fileInputRef.current?.click();
+  };
+
   const handleFileSelect = (e) => {
+    if (!supaUser) {
+      setAuthError('Please sign in to upload files.');
+      setAuthSuccess('');
+      setAuthTab('signin');
+      setAuthModalOpen(true);
+      e.target.value = '';
+      return;
+    }
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
@@ -1505,7 +1524,7 @@ const App = () => {
       )}
 
       {/* Upload Zone */}
-      <div className="upload-zone p-12 text-center mb-8" onClick={() => fileInputRef.current?.click()}>
+      <div className="upload-zone p-12 text-center mb-8" onClick={handleTriggerUpload}>
         <div className="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center mx-auto mb-4">
           <Upload size={26} className="text-blue-500" />
         </div>
@@ -1551,7 +1570,7 @@ const App = () => {
     if (!dataRows.length) return (
       <div className="p-8 flex items-center justify-center h-full">
         <EmptyState icon={BarChart2} title={T('noDataUpload')} desc={T('noDataMsg')}
-          action={<button onClick={() => fileInputRef.current?.click()} className="btn-primary px-5 py-2.5 flex items-center gap-2"><Upload size={14} />{T('uploadCta')}</button>}
+          action={<button onClick={handleTriggerUpload} className="btn-primary px-5 py-2.5 flex items-center gap-2"><Upload size={14} />{T('uploadCta')}</button>}
         />
       </div>
     );
@@ -1654,7 +1673,7 @@ const App = () => {
 
         {!dataRows.length ? (
           <EmptyState icon={Cpu} title={T('noDataUpload')} desc={T('noDataMsg')}
-            action={<button onClick={() => fileInputRef.current?.click()} className="btn-primary px-5 py-2.5 flex items-center gap-2"><Upload size={14} />{T('uploadCta')}</button>}
+            action={<button onClick={handleTriggerUpload} className="btn-primary px-5 py-2.5 flex items-center gap-2"><Upload size={14} />{T('uploadCta')}</button>}
           />
         ) : (
           <>
@@ -2371,16 +2390,7 @@ const App = () => {
             </button>
             {/* Upload */}
             <button
-              onClick={() => {
-                if (!supaUser) {
-                  setAuthModalOpen(true);
-                  setAuthTab('signin');
-                  setAuthError('');
-                  setAuthSuccess('');
-                } else {
-                  fileInputRef.current?.click();
-                }
-              }}
+              onClick={handleTriggerUpload}
               className="btn-primary flex items-center gap-2 px-4 py-2 text-xs relative"
             >
               {!supaUser && <Lock size={10} className="text-white/70" />}
