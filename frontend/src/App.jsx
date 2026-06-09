@@ -1088,6 +1088,7 @@ const App = () => {
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [profileUpdateLoading, setProfileUpdateLoading] = useState(false);
   const [profileMessage, setProfileMessage] = useState({ type: '', text: '' });
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Translation helper
   const T = (k) => LANG[lang]?.[k] || LANG.en[k] || k;
@@ -2048,7 +2049,6 @@ const App = () => {
     const initials = email ? email.slice(0,2).toUpperCase() : 'VO';
     const userName = supaUser?.user_metadata?.full_name || email.split('@')[0] || 'User';
     const totalRows = projects.reduce((s, p) => s + (p.rowCount || 0), 0);
-    const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
 
     return (
       <div className="p-8 max-w-2xl mx-auto overflow-y-auto h-full custom-scrollbar">
