@@ -12,7 +12,7 @@ import {
   Plus, ChevronLeft, ChevronRight, X, Download, Play, Loader2, Bot, User, Send,
   Globe, Sparkles, Star, Info, Target, RotateCcw, FolderOpen, Filter, Package,
   Eye, ChevronDown, Cpu, Layers, Hash, Type, Calendar, LogOut, LogIn, Shield, Lock,
-  UserCircle2, BarChart3, Award, TrendingUp as TrendUp, Cloud, Trash2
+  UserCircle2, BarChart3, Award, TrendingUp as TrendUp, Cloud, Trash2, Edit3
 } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
 import './index.css';
@@ -1082,6 +1082,13 @@ const App = () => {
   const [authSuccess, setAuthSuccess] = useState('');
   const [dbSyncing, setDbSyncing] = useState(false);
 
+  // ---- Profile Edit States ----
+  const [profileName, setProfileName] = useState('');
+  const [profilePassword, setProfilePassword] = useState('');
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [profileUpdateLoading, setProfileUpdateLoading] = useState(false);
+  const [profileMessage, setProfileMessage] = useState({ type: '', text: '' });
+
   // Translation helper
   const T = (k) => LANG[lang]?.[k] || LANG.en[k] || k;
 
@@ -1144,6 +1151,42 @@ const App = () => {
     });
     return () => subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (supaUser) {
+      setProfileName(supaUser.user_metadata?.full_name || supaUser.email?.split('@')[0] || '');
+    }
+  }, [supaUser]);
+
+  const handleUpdateProfile = async (e) => {
+    if (e) e.preventDefault();
+    if (!supabase || !supaUser) return;
+    setProfileUpdateLoading(true);
+    setProfileMessage({ type: '', text: '' });
+
+    try {
+      const updates = {
+        data: { full_name: profileName }
+      };
+
+      if (profilePassword) {
+        updates.password = profilePassword;
+      }
+
+      const { data, error } = await supabase.auth.updateUser(updates);
+
+      if (error) throw error;
+
+      setSupaUser(data.user);
+      setProfilePassword('');
+      setIsEditingProfile(false);
+      setProfileMessage({ type: 'success', text: 'Profile updated successfully!' });
+    } catch (err) {
+      setProfileMessage({ type: 'error', text: err.message });
+    } finally {
+      setProfileUpdateLoading(false);
+    }
+  };
 
   // ---- Supabase DB Helpers ----
   const loadProjectsFromDB = async (userId) => {
@@ -2015,6 +2058,17 @@ const App = () => {
           <p className="text-sm text-slate-500">Manage your account and preferences</p>
         </div>
 
+        {profileMessage.text && (
+          <div className={`mb-5 p-4 rounded-xl text-xs font-bold transition-all anim-fade flex items-center justify-between gap-3 ${
+            profileMessage.type === 'success' 
+              ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' 
+              : 'bg-red-50 text-red-700 border border-red-100'
+          }`}>
+            <span>{profileMessage.text}</span>
+            <button onClick={() => setProfileMessage({ type: '', text: '' })} className="text-[10px] font-black uppercase opacity-60 hover:opacity-100">Dismiss</button>
+          </div>
+        )}
+
         {/* Auth gate — not signed in */}
         {!supaUser ? (
           <div className="glass-card p-10 text-center anim-scale">
@@ -2031,37 +2085,102 @@ const App = () => {
         ) : (
           <div className="space-y-5">
 
-            {/* Profile Card */}
-            <div className="glass-card p-6 anim-fade">
-              <div className="flex items-center gap-5">
-                {/* Avatar */}
-                <div className="w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0 text-white text-2xl font-black shadow-lg"
-                  style={{background:'linear-gradient(135deg,#0A2A66,#1F5EDC)'}}>
-                  {initials}
+            {/* Profile Edit or Card */}
+            {isEditingProfile ? (
+              <form onSubmit={handleUpdateProfile} className="glass-card p-6 anim-fade space-y-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-xs font-black text-slate-800 uppercase tracking-widest">Edit Profile Details</h3>
+                  <button type="button" onClick={() => setIsEditingProfile(false)} className="text-[10px] font-black uppercase text-slate-400 hover:text-slate-600">Cancel</button>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-xl font-black text-slate-800 truncate">{userName}</h3>
-                    <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-black rounded-full uppercase tracking-wider flex-shrink-0">Pro</span>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Full Name</label>
+                    <input
+                      type="text"
+                      value={profileName}
+                      onChange={(e) => setProfileName(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white/50 focus:outline-none focus:border-blue-500 focus:bg-white transition-all"
+                      placeholder="Enter full name"
+                      required
+                    />
                   </div>
-                  <p className="text-sm text-slate-500 truncate mb-3">{email}</p>
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
-                      <div className="w-2 h-2 rounded-full bg-emerald-400" />
-                      Cloud Sync Active
+
+                  <div>
+                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">New Password (optional)</label>
+                    <input
+                      type="password"
+                      value={profilePassword}
+                      onChange={(e) => setProfilePassword(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white/50 focus:outline-none focus:border-blue-500 focus:bg-white transition-all"
+                      placeholder="Enter new password"
+                      minLength={6}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-2 pt-2 justify-end">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsEditingProfile(false);
+                      setProfileName(supaUser.user_metadata?.full_name || supaUser.email?.split('@')[0] || '');
+                      setProfilePassword('');
+                    }}
+                    className="px-5 py-2.5 rounded-xl text-xs font-bold border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all"
+                    disabled={profileUpdateLoading}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2.5 rounded-xl text-xs font-bold bg-blue-600 text-white hover:bg-blue-700 transition-all flex items-center justify-center gap-2"
+                    disabled={profileUpdateLoading}
+                  >
+                    {profileUpdateLoading ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div className="glass-card p-6 anim-fade">
+                <div className="flex items-center gap-5">
+                  {/* Avatar */}
+                  <div className="w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0 text-white text-2xl font-black shadow-lg"
+                    style={{background:'linear-gradient(135deg,#0A2A66,#1F5EDC)'}}>
+                    {initials}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-xl font-black text-slate-800 truncate">{userName}</h3>
+                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-black rounded-full uppercase tracking-wider flex-shrink-0">Pro</span>
+                      </div>
+                      <button
+                        onClick={() => setIsEditingProfile(true)}
+                        className="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all flex items-center gap-1.5"
+                      >
+                        <Edit3 size={11} /> Edit Profile
+                      </button>
                     </div>
-                    <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
-                      <Shield size={10} className="text-blue-400" />
-                      Row-Level Security
-                    </div>
-                    <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
-                      <Calendar size={10} className="text-slate-400" />
-                      Joined {joinDate}
+                    <p className="text-sm text-slate-500 truncate mb-3">{email}</p>
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
+                        <div className="w-2 h-2 rounded-full bg-emerald-400" />
+                        Cloud Sync Active
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
+                        <Shield size={10} className="text-blue-400" />
+                        Row-Level Security
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
+                        <Calendar size={10} className="text-slate-400" />
+                        Joined {joinDate}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Stats Row */}
             <div className="grid grid-cols-3 gap-4">
